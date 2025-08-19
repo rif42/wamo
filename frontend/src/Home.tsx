@@ -54,8 +54,14 @@ function Home() {
 
   useEffect(() => {
     async function load() {
-      const test = await fetch('http://localhost:8080/forms')
-      console.log("TEST BACKEND", test)
+      const res = await fetch('http://localhost:8080/forms', {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+      })
+      const data = await res.json()
+      console.log('TEST BACKEND', data)
     }
     load()
   }, [])
