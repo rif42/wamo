@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -20,6 +21,7 @@ var forms = []form{
 
 func main() {
 	router := gin.Default()
+	router.Use(cors.Default()) // All origins allowed by default
 	router.GET("/forms", getForms)
 
 	router.Run("localhost:8080")

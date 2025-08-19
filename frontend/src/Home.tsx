@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './Home.css'
 
 type MessageForm = {
@@ -8,7 +8,6 @@ type MessageForm = {
 }
 
 function Home() {
-
   const [formData, setFormData] = useState<MessageForm>({
     recipient: '',
     msg: '',
@@ -52,6 +51,14 @@ function Home() {
     const json = JSON.stringify(payload)
     console.log("final data", json)
   }
+
+  useEffect(() => {
+    async function load() {
+      const test = await fetch('http://localhost:8080/forms')
+      console.log("TEST BACKEND", test)
+    }
+    load()
+  }, [])
 
   return (
     <>
