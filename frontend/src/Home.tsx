@@ -50,20 +50,43 @@ function Home() {
     //c.log it
     const json = JSON.stringify(payload)
     console.log("final data", json)
+
+    sendForm()
+  }
+
+  async function checkForm() {
+    const res = await fetch('http://localhost:8080/forms', {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      },
+    })
+    const data = await res.json()
+    console.log('GET BACKEND', data)
+  }
+
+  async function sendForm() {
+    const testdata = {
+      "recipient": "Donald Trump",
+      "message": "FUCK YOU",
+      "date": new Date().toISOString()
+    }
+
+    const res2 = await fetch('http://localhost:8080/forms', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(testdata)
+    }
+    )
+    const resdata = await res2.json()
+    console.log('POST BACKEND', resdata)
+    checkForm()
   }
 
   useEffect(() => {
-    async function load() {
-      const res = await fetch('http://localhost:8080/forms', {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        },
-      })
-      const data = await res.json()
-      console.log('TEST BACKEND', data)
-    }
-    load()
+    checkForm()
   }, [])
 
   return (

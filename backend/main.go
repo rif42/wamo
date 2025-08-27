@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math/rand/v2"
 	"net/http"
 
 	"github.com/gin-contrib/cors"
@@ -9,25 +10,54 @@ import (
 
 // album represents data about a record album.
 type form struct {
-	ID        string `json:"id"`
+	ID        int    `json:"id"`
 	Recipient string `json:"recipient"`
 	Message   string `json:"message"`
+	Date      string `json:"date"`
+}
+
+type formInput struct {
+	Recipient string `json:"recipient"`
+	Message   string `json:"message"`
+	Date      string `json:"date"`
 }
 
 var forms = []form{
-	{ID: "1", Recipient: "Foo", Message: "Bruh"},
-	{ID: "2", Recipient: "Foo2", Message: "Bruh2"},
+	{ID: 1, Recipient: "Foo", Message: "Bruh", Date: "2006-01-02T15:04:05Z07:00"},
 }
 
 func main() {
 	router := gin.Default()
 	router.Use(cors.Default()) // All origins allowed by default
 	router.GET("/forms", getForms)
+	router.POST("/forms", postForms)
 
 	router.Run("localhost:8080")
+
 }
 
 // getForms responds with the list of all forms as JSON.
 func getForms(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, forms)
+}
+
+func postForms(c *gin.Context) {
+	var newForm formInput
+
+	// var newId = rand.IntN(100_000_000)
+
+	if err := c.BindJSON(&newForm); err != nil {
+		return
+	}
+
+	created := form{
+		ID:        rand.IntN(100_000_000),
+		Recipient: newForm.Recipient,
+		Message:   newForm.Message,
+		Date:      newForm.Date,
+	}
+
+	forms = append(forms, created)
+
+	c.IndentedJSON(http.StatusCreated, newForm)
 }
