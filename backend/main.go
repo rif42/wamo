@@ -3,6 +3,7 @@ package main
 import (
 	"math/rand/v2"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -30,6 +31,7 @@ func main() {
 	router := gin.Default()
 	router.Use(cors.Default()) // All origins allowed by default
 	router.GET("/forms", getForms)
+	router.GET("/forms/:id", getFormsByID)
 	router.POST("/forms", postForms)
 
 	router.Run("localhost:8080")
@@ -60,4 +62,23 @@ func postForms(c *gin.Context) {
 	forms = append(forms, created)
 
 	c.IndentedJSON(http.StatusCreated, newForm)
+}
+
+func getFormsByID(c*gin.Context){
+	targetId := c.Param("id")
+	intId, err := strconv.Atoi(targetId)
+	
+	if err != nil {
+		// Handle error case - the string wasn't a valid integer
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Invalid ID format"})
+		return
+	}
+	
+	for _, a := range forms{
+		if a.ID == intId{
+			c.IndentedJSON(http.StatusOK, a)
+			return
+		}
+	}
+	c.IndentedJSON(http.StatusNotFound, gin.H{"message":"data not found"})
 }
